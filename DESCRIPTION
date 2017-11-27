@@ -1,0 +1,22 @@
+Package: texteffect
+Version: 0.1
+Date: 2017-11-27
+Title: Discovering Latent Treatments in Text Corpora and Estimating
+        Their Causal Effects
+Author: Christian Fong <christianfong@stanford.edu>
+Maintainer: Christian Fong <christianfong@stanford.edu>
+Depends: R (>= 3.3.3), MASS, boot, ggplot2
+Imports:
+Description: Implements the approach described in Fong and Grimmer (2016) <https://aclweb.org/anthology/P/P16/P16-1151.pdf> for 
+	automatically discovering latent treatments from a corpus and estimating the average marginal component effect (AMCE) of 
+	each treatment.  The data is divided into a training and test set.  The supervised Indian Buffet Process (sibp) is used 
+	to discover latent treatments in the training set.  The fitted model is then applied to the test set to infer the values 
+	of the latent treatments in the test set.  Finally, Y is regressed on the latent treatments in the test set to estimate 
+	the causal effect of each treatment.
+LazyLoad: yes
+LazyData: yes
+License: GPL (>= 2)
+NeedsCompilation: no
+Repository: CRAN
+Packaged: 2017-11-27 16:38:21 UTC; Christian
+Date/Publication: 2017-11-27 16:49:24 UTC
