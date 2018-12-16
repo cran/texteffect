@@ -4,11 +4,12 @@
 \description{
   \code{infer_Z} uses an sibp object fitted on a training set to infer the treatments in a test set.}
 \usage{
-	  infer_Z(sibp.fit, X)
+	  infer_Z(sibp.fit, X, newX = FALSE)
 }
 \arguments{
   \item{sibp.fit}{A \code{sibp} object.}
-  \item{X}{The covariates for the data set where Z is to be inferred.  These covariates should be preprocessed by subtracting the mean of X in the training set and dividing by the standard deviation.  See the example for more details.}
+  \item{X}{The covariates for the data set where Z is to be inferred.  Usually, the user should Use the same X used to call the sibp function.}
+  \item{newX}{Set to TRUE if the X supplied is not the training and test set.  Used primarily for followup validation experiments.  Defaults to FALSE.}
 }
 \details{This function applies the mapping from words to treatments discovered in the training set to infer which observations have which treatments in the test set.  Usually, users will be better served by calling \code{sibp_amce}, which calls this function internally before returning estimates and confidence intervals for the average marginal component effects.}
 \value{
@@ -26,15 +27,13 @@ data(BioSample)
 # Divide into training and test sets
 Y <- BioSample[,1]
 X <- BioSample[,-1]
-train.ind <- get_training_set(X, Y, training.prop = 0.5)
+set.seed(1)
+train.ind <- sample(1:nrow(X), size = 0.5*nrow(X), replace = FALSE)
 
 # Fit an sIBP on the training data
 sibp.fit <- sibp(X, Y, K = 2, alpha = 4, sigmasq.n = 0.8, 
 				 train.ind = train.ind)
 
-# Pre-process the test set
-X.test <- t(apply(X, 1, function(x) (x - sibp.fit$meanX)/sibp.fit$sdX))
-
 # Infer the latent treatments in the test set
-infer_Z(sibp.fit, X.test)
+infer_Z(sibp.fit, X)
 }

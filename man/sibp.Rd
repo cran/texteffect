@@ -6,7 +6,7 @@
 \usage{
 	  sibp(X, Y, K, alpha, sigmasq.n, 
 	  a = 0.1, b = 0.1, sigmasq.A = 5, 
-	  train.ind, silent = FALSE )
+	  train.ind, G = NULL, silent = FALSE )
 }
 \arguments{
   \item{X}{The covariates for all observations in the training set, where each row is a document and each column is the count of a word.}
@@ -18,6 +18,7 @@
   \item{b}{A parameter that, together with a, influences the variance of the treatment effects and the outcomes.  b = 0.1 is a reasonably diffuse choice.}
   \item{sigmasq.A}{A parameter determining the variance of the effect of the treatments on word counts.  A diffuse choice, such as 5, is usually appropriate.}
   \item{train.ind}{The indices of the observations in the training set, usually obtained from get_training_set().}
+  \item{G}{An optional group membership matrix.  The AMCE for a given treatment is permitted to vary as a function of the individual's group.}
   \item{silent}{If \code{TRUE}, prints how much the parameters have moved every 10 iterations of sIBP.}
 }
 \details{Fits a supervised Indian Buffet Process using variational inference.  Before running this function, the data should be divided into a training set and a test set.  This function should be run on the training set to discover latent treatments in the data that seem to be correlated with the outcome.
@@ -53,8 +54,8 @@ data(BioSample)
 # Divide into training and test sets
 Y <- BioSample[,1]
 X <- BioSample[,-1]
-
-train.ind <- get_training_set(X, Y, training.prop = 0.5)
+set.seed(1)
+train.ind <- sample(1:nrow(X), size = 0.5*nrow(X), replace = FALSE)
 
 # Search sIBP for several parameter configurations; fit each to the training set
 sibp.search <- sibp_param_search(X, Y, K = 2, alphas = c(2,4), sigmasq.ns = c(0.8, 1), 

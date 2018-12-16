@@ -1,5 +1,5 @@
 sibp_param_search<-function(X, Y, K, alphas, sigmasq.ns, iters, a = 0.1, b = 0.1, 
-                            sigmasq.A = 5, train.ind = train.ind, seed = 0){
+                            sigmasq.A = 5, train.ind = train.ind, G = NULL, seed = 0){
   paramslist <- list("alphas" = alphas, "sigmasq.ns" =  sigmasq.ns, "iters" = iters)
   for (alpha in alphas){
     print(alpha)
@@ -12,7 +12,7 @@ sibp_param_search<-function(X, Y, K, alphas, sigmasq.ns, iters, a = 0.1, b = 0.1
         paramslist[[as.character(alpha)]][[as.character(sigmasq.n)]][[i]] <- 
           sibp(X = X, Y = Y, K = K, alpha = alpha, a = a, b = b, 
                sigmasq.A = sigmasq.A, sigmasq.n = sigmasq.n, 
-               train.ind = train.ind, silent = TRUE)
+               train.ind = train.ind, G = G, silent = TRUE)
       }
     }
   }

@@ -8,7 +8,7 @@
 }
 \arguments{
   \item{sibp.fit}{A \code{sibp} object.}
-  \item{words}{The actual words, usually obtained through rownames(X).}
+  \item{words}{The actual words, usually obtained through colnames(X).}
   \item{num.words}{The number of top words to report.}
   \item{verbose}{If set to true, reports how common each treatment is (so that the analyst can focus on the common treatments) and how closely associated each word is with each treatment.}
 }
@@ -28,8 +28,8 @@ data(BioSample)
 # Divide into training and test sets
 Y <- BioSample[,1]
 X <- BioSample[,-1]
-
-train.ind <- get_training_set(X, Y, training.prop = 0.5)
+set.seed(1)
+train.ind <- sample(1:nrow(X), size = 0.5*nrow(X), replace = FALSE)
 
 # Fit an sIBP on the training data
 sibp.fit <- sibp(X, Y, K = 2, alpha = 4, sigmasq.n = 0.8, 

@@ -6,7 +6,8 @@
   the user can then test the effects fo the most interesting treatments.}
 \usage{
 	  sibp_param_search(X, Y, K, alphas, sigmasq.ns, iters, 
-	  a = 0.1, b = 0.1, sigmasq.A = 5, train.ind = train.ind, seed = 0)
+	  a = 0.1, b = 0.1, sigmasq.A = 5, train.ind = train.ind,
+	  G = NULL, seed = 0)
 }
 \arguments{
   \item{X}{The covariates for the full data set.  The division between the training and test set is handled inside the function.}
@@ -19,6 +20,7 @@
   \item{b}{A parameter.}
   \item{sigmasq.A}{A parameter.}
   \item{train.ind}{The indices of the observations in the training set, usually obtained from get_training_set().}
+  \item{G}{An optional group membership matrix.  The AMCE for a given treatment is permitted to vary as a function of the individual's group.}
   \item{seed}{The seed to be used, so the result can be replicated.}
 }
 \details{Fits a supervised Indian Buffet Process using variational inference for combinations of alpha and sigmasq.n.  alpha influences how common the treatments are (where larger alphas imply more common treatments) and sigmasq.n influences how much of the variation of the outcome must be explained by the treatments.  These parameters are the most important for determining the quality of the treatments discovered, so it is usually a good idea to experiment with many combinations.  Because the treatments discovered can be sensitive to starting values, it is also usually a good idea to try each combination of alpha and sigmasq.n several times by setting iters > 1.
@@ -38,7 +40,8 @@ data(BioSample)
 # Divide into training and test sets
 Y <- BioSample[,1]
 X <- BioSample[,-1]
-train.ind <- get_training_set(X, Y, training.prop = 0.5)
+set.seed(1)
+train.ind <- sample(1:nrow(X), size = 0.5*nrow(X), replace = FALSE)
 
 # Search sIBP for several parameter configurations; fit each to the training set
 sibp.search <- sibp_param_search(X, Y, K = 2, alphas = c(2,4),

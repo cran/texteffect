@@ -1,8 +1,9 @@
 importFrom(boot, boot)
 importFrom(ggplot2, ggplot, aes, geom_point, element_text, labs, geom_hline, geom_errorbar, theme)
 importFrom(MASS, ginv)
-importFrom("stats", "coef", "cov", "lm", "quantile", "rbeta", "rbinom", "rnorm", "sd")
+importFrom("stats", "coef", "cov", "lm", "quantile", "rbeta", "rbinom", "rnorm", "sd", "qnorm")
 importFrom("utils", "head", "packageDescription")
+importFrom("graphics", "par")
 
 export(sibp, sibp_amce, sibp_exclusivity, infer_Z, sibp_param_search, 
-sibp_rank_runs, sibp_top_words, sibp_amce_plot, get_training_set)
+sibp_rank_runs, sibp_top_words, sibp_amce_plot)

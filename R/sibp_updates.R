@@ -13,7 +13,9 @@ init_nu<-function(N, K, alpha){
 
 # Initializes all the parameters by first drawing nu and an initial phi and then drawing all of the others
 # conditional on these two.
-initial_draw<-function(Y, X, N, D, K, alpha, a, b, sigmasq.A, sigmasq.n){  
+
+# Update: Will have to include group membership matrix
+initial_draw<-function(Y, X, N, D, K, alpha, a, b, sigmasq.A, sigmasq.n, G){  
   out<-list()
   
   out$nu <- init_nu(N, K, alpha)
@@ -26,7 +28,8 @@ initial_draw<-function(Y, X, N, D, K, alpha, a, b, sigmasq.A, sigmasq.n){
   out$phi <- update$phi
   out$big.Phi <- update$big.Phi
   
-  update <- update_betatau(Y, K, N, a, b, out$nu)
+  # Update: Will have to incorporate group-membership matrix
+  update <- update_betatau(Y, K, N, a, b, out$nu, G)
   out$m <- update$m
   out$S <- update$S
   out$c <- update$c
@@ -53,32 +56,48 @@ update_A<-function(X, N, D, K, sigmasq.A, sigmasq.n, phi, nu){
 }
 
 # Update m, S, c, and d
-update_betatau<-function(Y, K, N, a, b, nu){  
-  ztz<-t(nu)%*%nu
-  diag(ztz) <- apply(nu, 2, sum)
+# Update: Need to add group-membership matrix as an argument
+update_betatau<-function(Y, K, N, a, b, nu, G){
+  # Augment nu so it is different for each group
+  nutilde <- c()
+  for (l in 1:ncol(G)){
+    nutilde <- cbind(nutilde, G[,l]*nu)
+  }
+
+  ztz<-t(nutilde)%*%nutilde
+  diag(ztz) <- apply(nutilde, 2, sum)
   
   out <- list()
   
-  out$S <- ginv(ztz + diag(K))
-  out$m <- out$S %*% t(nu) %*% Y
+  out$S <- ginv(ztz + diag(ncol(nutilde)))
+  out$m <- out$S %*% t(nutilde) %*% Y
   
   out$c <- a + N/2
-  out$d <- c(b + (t(Y)%*%Y - t(Y) %*% nu %*% out$S %*% t(nu) %*% Y)/2)
+  out$d <- c(b + (t(Y)%*%Y - t(Y) %*% nutilde %*% out$S %*% t(nutilde) %*% Y)/2)
   return(out)
 }
 
 # Update nu
-update_Z<-function(nu, lambda, c, d, phi, big.Phi, m, S, sigmasq.n, Y, N, K, X){
+# Update: Need to take group-membership matrix as an argument
+update_Z<-function(nu, lambda, c, d, phi, big.Phi, m, S, sigmasq.n, Y, N, K, X, G){
   pi.component <- apply(lambda, 1, function(lam) digamma(lam[1]) - digamma(lam[2]))
   
   big.Phi.tr <- sapply(1:K, function(k) sum(diag(big.Phi[[k]])))
   X.component <- -1/(2*sigmasq.n) * t(apply(apply(phi, 1, function(ph) -2*ph%*%t(X) + sum(ph^2)), 1, 
                                             function(x) x + big.Phi.tr))
-  Y.component <- as.numeric(-c/(2*d)) * t(apply(-2*Y%*%t(m), 1, function(y) y + d*diag(S)/(c-1) + m^2))
   
+  # Update: Will need to include selector for appropriate m and S
+  # m is LK
+  mtilde <- as.matrix(G)%*%matrix(m, nrow = ncol(G), ncol = K, byrow = FALSE)
+  diagStilde <- as.matrix(G)%*%matrix(diag(S), nrow = ncol(G), ncol = K, byrow = FALSE)
+  Y.component <- as.numeric(-c/(2*d))*(-2*as.vector(Y)*mtilde + d*diagStilde/(c-1) + mtilde^2)
+  #Y.component <- as.numeric(-c/(2*d)) * t(apply(-2*Y%*%t(m), 1, function(y) y + d*diag(S)/(c-1) + m^2))
+
   for (k in 1:K){
     X.sumexcept <- -1/(2*sigmasq.n) * as.numeric(2*phi[k,]%*%t(nu%*%phi - nu[,k,drop=FALSE]%*%phi[k,,drop=FALSE]))
-    Y.sumexcept <- -c/(2*d) * 2*m[k]*as.numeric(nu%*%m - nu[,k]*m[k])
+    # Update: Will need to include selector for appropriate m and S
+    Y.sumexcept <- -c/(2*d) * 2*mtilde[,k]*as.numeric(apply(nu*mtilde, 1, sum) - nu[,k]*mtilde[,k])
+    #Y.sumexcept <- -c/(2*d) * 2*m[k]*as.numeric(nu%*%m - nu[,k]*m[k])
     v <- pi.component[k] + X.component[,k] + X.sumexcept + Y.component[,k]  + Y.sumexcept
     nu[,k] <- (1 + exp(-v))^(-1)
     

@@ -1,6 +1,12 @@
 # Predicts the Z on the test set
-infer_Z<-function(sibp.fit, X){
-  N <- nrow(X)
+infer_Z<-function(sibp.fit, X, newX = FALSE){
+  if (newX){
+    X.test <- t(apply(X, 1, function(x) (x - sibp.fit$meanX)/sibp.fit$sdX))
+  }
+  else{
+    X.test <- t(apply(X[sibp.fit$test.ind,], 1, function(x) (x - sibp.fit$meanX)/sibp.fit$sdX))
+  }
+  N <- nrow(X.test)
 
   K <- sibp.fit$K
   alpha <- sibp.fit$sigmasq.n
@@ -18,7 +24,7 @@ infer_Z<-function(sibp.fit, X){
     pi.component <- apply(lambda, 1, function(lam) digamma(lam[1]) - digamma(lam[2]))
     
     big.Phi.tr <- sapply(1:K, function(k) sum(diag(big.Phi[[k]])))
-    X.component <- -1/(2*sigmasq.n) * t(apply(apply(phi, 1, function(ph) -2*ph%*%t(X) + sum(ph^2)), 1, 
+    X.component <- -1/(2*sigmasq.n) * t(apply(apply(phi, 1, function(ph) -2*ph%*%t(X.test) + sum(ph^2)), 1, 
                                               function(x) x + big.Phi.tr))
     
     for (k in 1:K){

@@ -1,6 +1,15 @@
+# Need to include group-membership vector
 sibp<-function(X, Y, K, alpha, sigmasq.n, a = 0.1, b = 0.1, sigmasq.A = 5, 
-               train.ind, silent = FALSE){
+               train.ind, G = NULL, silent = FALSE){
   out<-list()
+  
+  # Need to convert group-membership vector into group-membership matrix
+  # Want it to be the case that G %*% beta selects the correct beta
+  if (is.null(G)){
+    G <- matrix(1, nrow = nrow(X), ncol = 1)
+  }
+  
+  Gtrain <- G[train.ind,,drop=FALSE]
 
   Ytrain <- Y[train.ind]
   Xtrain <- X[train.ind,]
@@ -24,6 +33,7 @@ sibp<-function(X, Y, K, alpha, sigmasq.n, a = 0.1, b = 0.1, sigmasq.A = 5,
   D<-ncol(Xtrain)
   
   out$K <- K
+  out$L <- ncol(G)
   out$D <- D
   out$alpha <- alpha
   out$a <- a
@@ -31,7 +41,7 @@ sibp<-function(X, Y, K, alpha, sigmasq.n, a = 0.1, b = 0.1, sigmasq.A = 5,
   out$sigmasq.A <- sigmasq.A
   out$sigmasq.n <- sigmasq.n
   
-  initial.params <- initial_draw(Ytrain, Xtrain, N, D, K, alpha, a, b, sigmasq.A, sigmasq.n)
+  initial.params <- initial_draw(Ytrain, Xtrain, N, D, K, alpha, a, b, sigmasq.A, sigmasq.n, Gtrain)
   
   # Initialize parameters
   c <- initial.params$c
@@ -50,12 +60,12 @@ sibp<-function(X, Y, K, alpha, sigmasq.n, a = 0.1, b = 0.1, sigmasq.A = 5,
   while (!converged){
     iterations<-iterations+1
     
-    new.nu <- update_Z(nu, lambda, c, d, phi, big.Phi, m, S, sigmasq.n, Ytrain, N, K, Xtrain)
+    new.nu <- update_Z(nu, lambda, c, d, phi, big.Phi, m, S, sigmasq.n, Ytrain, N, K, Xtrain, Gtrain)
     new.lambda <- update_pi(alpha, N, K, new.nu)
     update <- update_A(Xtrain, N, D, K, sigmasq.A, sigmasq.n, phi, new.nu)
     new.phi <- update$phi
     new.big.Phi <- update$big.Phi
-    update <- update_betatau(Ytrain, K, N, a, b, new.nu)
+    update <- update_betatau(Ytrain, K, N, a, b, new.nu, Gtrain)
     new.c <- update$c
     new.d <- update$d
     new.m <- update$m

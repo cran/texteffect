@@ -5,17 +5,19 @@
 \description{
   \code{sibp_amce} uses an sibp object fitted on a training set to estimate the AMCE with the test set.}
 \usage{
-	  sibp_amce(sibp.fit, X, Y, seed = 0, level = 0.05, nboot = 1000)
-	  sibp_amce_plot(sibp.amce,  xlab = "Feature", ylab = "Outcome")
+	  sibp_amce(sibp.fit, X, Y, G = NULL, seed = 0, level = 0.05, thresh = 0.9)
+	  sibp_amce_plot(sibp.amce,  L = 1, xlab = "Feature", ylab = "Outcome")
 }
 \arguments{
   \item{sibp.fit}{A \code{sibp} object.}
   \item{X}{The covariates for the full data set.  The division between the training and test set is handled inside the function.}
   \item{Y}{The outcomes for the full data set.  The division between the training and test set is handled inside the function.}
+  \item{G}{A group membership matrix.  The AMCE for a given treatment is permitted to vary as a function of the individual's group.}
   \item{seed}{The seed}
   \item{level}{The level of the confidence intervals to be obtained.}
-  \item{nboot}{The number of bootstrap replicates used to calculate the confidence intervals for the AMCE.}
+  \item{thresh}{The treatment will = 1 when nu >= thresh and 0 otherwise.  This avoids problems due to misclassification error.}
   \item{sibp.amce}{The table returned by code{sibp_amce}.}
+  \item{L}{The number of columns in the group membership matrix.  By default, 1.  Used to omit the intercepts from the AMCE plot.}
   \item{xlab}{The label for the x-axis of the plot.}
   \item{ylab}{The label for the y-axis of the plot.}
 }
@@ -35,12 +37,13 @@ data(BioSample)
 # Divide into training and test sets
 Y <- BioSample[,1]
 X <- BioSample[,-1]
-train.ind <- get_training_set(X, Y, training.prop = 0.5)
+set.seed(1)
+train.ind <- sample(1:nrow(X), size = 0.5*nrow(X), replace = FALSE)
 
 # Fit an sIBP on the training data
 sibp.fit <- sibp(X, Y, K = 2, alpha = 4, sigmasq.n = 0.8, 
 				 train.ind = train.ind)
 				 
-sibp.amce <- sibp_amce(sibp.fit, X, Y, nboot = 100)
+sibp.amce <- sibp_amce(sibp.fit, X, Y)
 sibp_amce_plot(sibp.amce)
 }

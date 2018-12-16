@@ -1,11 +1,11 @@
 Package: texteffect
-Version: 0.1
-Date: 2017-11-27
+Version: 0.2
+Date: 2018-12-15
 Title: Discovering Latent Treatments in Text Corpora and Estimating
         Their Causal Effects
 Author: Christian Fong <christianfong@stanford.edu>
 Maintainer: Christian Fong <christianfong@stanford.edu>
-Depends: R (>= 3.3.3), MASS, boot, ggplot2
+Depends: R (>= 3.3), MASS, boot, ggplot2
 Imports:
 Description: Implements the approach described in Fong and Grimmer (2016) <https://aclweb.org/anthology/P/P16/P16-1151.pdf> for 
 	automatically discovering latent treatments from a corpus and estimating the average marginal component effect (AMCE) of 
@@ -18,5 +18,5 @@ LazyData: yes
 License: GPL (>= 2)
 NeedsCompilation: no
 Repository: CRAN
-Packaged: 2017-11-27 16:38:21 UTC; Christian
-Date/Publication: 2017-11-27 16:49:24 UTC
+Packaged: 2018-12-16 05:48:15 UTC; chris
+Date/Publication: 2018-12-16 06:10:03 UTC

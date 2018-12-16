@@ -1,7 +1,6 @@
 sibp_exclusivity<-function(sibp.fit, X, num.words = 10){
   X.train <- t(apply(X[sibp.fit$train.ind,], 1, function(x) (x - sibp.fit$meanX)/sibp.fit$sdX))
-  rm(X)
-  
+
   top.words <- apply(sibp.fit$phi, 1, order, decreasing = TRUE)[1:num.words,]
   C <- array()
   for (t in 1:ncol(sibp.fit$nu)){

@@ -31,7 +31,8 @@ data(BioSample)
 # Divide into training and test sets
 Y <- BioSample[,1]
 X <- BioSample[,-1]
-train.ind <- get_training_set(X, Y, training.prop = 0.5)
+set.seed(1)
+train.ind <- sample(1:nrow(X), size = 0.5*nrow(X), replace = FALSE)
 
 # Search sIBP for several parameter configurations; fit each to the training set
 sibp.search <- sibp_param_search(X, Y, K = 2, alphas = c(2,4),
