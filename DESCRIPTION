@@ -1,6 +1,6 @@
 Package: texteffect
-Version: 0.2
-Date: 2018-12-15
+Version: 0.3
+Date: 2019-03-23
 Title: Discovering Latent Treatments in Text Corpora and Estimating
         Their Causal Effects
 Author: Christian Fong <christianfong@stanford.edu>
@@ -18,5 +18,5 @@ LazyData: yes
 License: GPL (>= 2)
 NeedsCompilation: no
 Repository: CRAN
-Packaged: 2018-12-16 05:48:15 UTC; chris
-Date/Publication: 2018-12-16 06:10:03 UTC
+Packaged: 2019-03-24 00:45:48 UTC; chris
+Date/Publication: 2019-03-24 05:30:06 UTC

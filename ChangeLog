@@ -1,3 +1,4 @@
 version date      description
 0.1     10/07/17  The first version on CRAN.
-0.2		  12/15/18  Added ability to make group matrices.  Various bug fixes and interface improvements.
+0.2		12/15/18  Added ability to make group matrices.  Various bug fixes and interface improvements.
+0.3		03/25/19  Fixed indexing on group matrices for AMCE, improved interface for AMCE and plots.

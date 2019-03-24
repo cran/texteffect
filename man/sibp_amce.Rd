@@ -5,8 +5,8 @@
 \description{
   \code{sibp_amce} uses an sibp object fitted on a training set to estimate the AMCE with the test set.}
 \usage{
-	  sibp_amce(sibp.fit, X, Y, G = NULL, seed = 0, level = 0.05, thresh = 0.9)
-	  sibp_amce_plot(sibp.amce,  L = 1, xlab = "Feature", ylab = "Outcome")
+	  sibp_amce(sibp.fit, X, Y, G = NULL, seed = 0, level = 0.05, thresh = 0.5)
+	  sibp_amce_plot(sibp.amce, xlab = "Feature", ylab = "Outcome", subs = NULL)
 }
 \arguments{
   \item{sibp.fit}{A \code{sibp} object.}
@@ -17,9 +17,9 @@
   \item{level}{The level of the confidence intervals to be obtained.}
   \item{thresh}{The treatment will = 1 when nu >= thresh and 0 otherwise.  This avoids problems due to misclassification error.}
   \item{sibp.amce}{The table returned by code{sibp_amce}.}
-  \item{L}{The number of columns in the group membership matrix.  By default, 1.  Used to omit the intercepts from the AMCE plot.}
   \item{xlab}{The label for the x-axis of the plot.}
   \item{ylab}{The label for the y-axis of the plot.}
+  \item{subs}{The susbet of the coefficients to plot.  By default, plots all coefficients.}
 }
 \details{Nothing}
 \value{
